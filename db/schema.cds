@@ -28,7 +28,7 @@ entity Customer : managed {
 
 entity FoodItems : managed {
     key ID : Integer;
-    key name : String(64);
+    name : String(64);
     orderitems : Association to many OrderItems on orderitems.fooditem = $self;
 }
 
