@@ -1,0 +1,5 @@
+ID;firstname;lastname;street;street_number;postcode;city;email
+1;Gustav;Gans;Badstr.;25;12345;Berlin;gustav.gans@email.com
+2;Dagobert;Duck;Turmstr.;10;22222;Frankfurt;dagobert.duck@email.com
+3;Donald;Duck;Poststr.;12;45432;Ratingen;donald.duck@email.com
+4;Max;Mustermann;Lessingstr.;120;54321;Leverkusen;max.mustermann@email.com
