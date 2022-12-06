@@ -20,7 +20,8 @@
   "scripts": {
     "start": "cds run",
     "watch-project1": "cds watch --open project1/webapp/index.html?sap-ui-xx-viewCache=false",
-    "watch-felem_orders": "cds watch --open felem_orders/webapp/index.html?sap-ui-xx-viewCache=false"
+    "watch-felem_orders": "cds watch --open felem_orders/webapp/index.html?sap-ui-xx-viewCache=false",
+    "watch-fiori_elem_ordermonitor": "cds watch --open fiori_elem_ordermonitor/webapp/index.html?sap-ui-xx-viewCache=false"
   },
   "engines": {
     "node": "^16.15"
@@ -67,6 +68,7 @@
     "app/project1",
     "app/project1",
     "app/project1",
-    "app/felem_orders"
+    "app/felem_orders",
+    "app/fiori_elem_ordermonitor"
   ]
 }

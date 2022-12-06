@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Capabilities.V1.xml">
+        <edmx:Include Alias="Capabilities" Namespace="Org.OData.Capabilities.V1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Common.xml">
+        <edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Core.V1.xml">
+        <edmx:Include Alias="Core" Namespace="Org.OData.Core.V1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/UI.xml">
+        <edmx:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>
+    </edmx:Reference>
+    <edmx:DataServices>
+        <Schema Namespace="OrderMonitorService" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+            <EntityContainer Name="EntityContainer">
+                <EntitySet Name="Orders" EntityType="OrderMonitorService.Orders">
+                    <NavigationPropertyBinding Path="customer" Target="Customer"/>
+                    <NavigationPropertyBinding Path="orderitems" Target="OrderItems"/>
+                </EntitySet>
+                <EntitySet Name="Customer" EntityType="OrderMonitorService.Customer">
+                    <NavigationPropertyBinding Path="orders" Target="Orders"/>
+                </EntitySet>
+                <EntitySet Name="OrderItems" EntityType="OrderMonitorService.OrderItems">
+                    <NavigationPropertyBinding Path="IDorder" Target="Orders"/>
+                    <NavigationPropertyBinding Path="fooditem" Target="FoodItems"/>
+                </EntitySet>
+                <EntitySet Name="FoodItems" EntityType="OrderMonitorService.FoodItems">
+                    <NavigationPropertyBinding Path="orderitems" Target="OrderItems"/>
+                </EntitySet>
+            </EntityContainer>
+            <EntityType Name="Orders">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="createdBy" Type="Edm.String" MaxLength="255"/>
+                <Property Name="modifiedAt" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="modifiedBy" Type="Edm.String" MaxLength="255"/>
+                <Property Name="ID" Type="Edm.Int32" Nullable="false"/>
+                <NavigationProperty Name="customer" Type="OrderMonitorService.Customer" Partner="orders">
+                    <ReferentialConstraint Property="customer_ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <Property Name="customer_ID" Type="Edm.Int32"/>
+                <NavigationProperty Name="orderitems" Type="Collection(OrderMonitorService.OrderItems)" Partner="IDorder"/>
+            </EntityType>
+            <EntityType Name="Customer">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="createdBy" Type="Edm.String" MaxLength="255"/>
+                <Property Name="modifiedAt" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="modifiedBy" Type="Edm.String" MaxLength="255"/>
+                <Property Name="ID" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="firstname" Type="Edm.String" MaxLength="128"/>
+                <Property Name="lastname" Type="Edm.String" MaxLength="128"/>
+                <Property Name="street" Type="Edm.String" MaxLength="256"/>
+                <Property Name="street_number" Type="Edm.String" MaxLength="10"/>
+                <Property Name="postcode" Type="Edm.String" MaxLength="5"/>
+                <Property Name="city" Type="Edm.String" MaxLength="128"/>
+                <Property Name="email" Type="Edm.String" MaxLength="256"/>
+                <NavigationProperty Name="orders" Type="Collection(OrderMonitorService.Orders)" Partner="customer"/>
+            </EntityType>
+            <EntityType Name="OrderItems">
+                <Key>
+                    <PropertyRef Name="IDorder_ID"/>
+                    <PropertyRef Name="pos"/>
+                </Key>
+                <NavigationProperty Name="IDorder" Type="OrderMonitorService.Orders" Partner="orderitems">
+                    <ReferentialConstraint Property="IDorder_ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <Property Name="IDorder_ID" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="pos" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="count" Type="Edm.Int32"/>
+                <NavigationProperty Name="fooditem" Type="OrderMonitorService.FoodItems" Partner="orderitems">
+                    <ReferentialConstraint Property="fooditem_ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <Property Name="fooditem_ID" Type="Edm.Int32"/>
+            </EntityType>
+            <EntityType Name="FoodItems">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="createdBy" Type="Edm.String" MaxLength="255"/>
+                <Property Name="modifiedAt" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="modifiedBy" Type="Edm.String" MaxLength="255"/>
+                <Property Name="ID" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="name" Type="Edm.String" MaxLength="64"/>
+                <NavigationProperty Name="orderitems" Type="Collection(OrderMonitorService.OrderItems)" Partner="fooditem"/>
+            </EntityType>
+            <Annotations Target="OrderMonitorService.Orders">
+                <Annotation Term="UI.HeaderInfo">
+                    <Record Type="UI.HeaderInfoType">
+                        <PropertyValue Property="TypeName" String="Order"/>
+                        <PropertyValue Property="TypeNamePlural" String="Orders"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.SelectionFields">
+                    <Collection>
+                        <PropertyPath>ID</PropertyPath>
+                        <PropertyPath>customer_ID</PropertyPath>
+                        <PropertyPath>createdAt</PropertyPath>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Label" String="Order-ID:"/>
+                            <PropertyValue Property="Value" Path="ID"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="createdAt"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Label" String="Customer-ID:"/>
+                            <PropertyValue Property="Value" Path="customer/ID"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="customer/firstname"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="customer/lastname"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.Facets">
+                    <Collection>
+                        <Record Type="UI.CollectionFacet">
+                            <PropertyValue Property="Label" String="Order Details"/>
+                            <PropertyValue Property="Facets">
+                                <Collection>
+                                    <Record Type="UI.ReferenceFacet">
+                                        <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#Main"/>
+                                        <PropertyValue Property="Label" String="Main Facet"/>
+                                    </Record>
+                                    <Record Type="UI.ReferenceFacet">
+                                        <PropertyValue Property="Target" AnnotationPath="orderitems/@UI.LineItem"/>
+                                        <PropertyValue Property="Label" String="Order Items"/>
+                                    </Record>
+                                </Collection>
+                            </PropertyValue>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="Main">
+                    <Record Type="UI.FieldGroupType">
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Label" String="Order-ID"/>
+                                    <PropertyValue Property="Value" Path="ID"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Label" String="Order Date"/>
+                                    <PropertyValue Property="Value" Path="createdAt"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Label" String="Customer ID"/>
+                                    <PropertyValue Property="Value" Path="customer/ID"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Label" String="First Name"/>
+                                    <PropertyValue Property="Value" Path="customer/firstname"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Label" String="Last Name"/>
+                                    <PropertyValue Property="Value" Path="customer/lastname"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Label" String="Postcode"/>
+                                    <PropertyValue Property="Value" Path="customer/postcode"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Label" String="City"/>
+                                    <PropertyValue Property="Value" Path="customer/city"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Label" String="Street"/>
+                                    <PropertyValue Property="Value" Path="customer/street"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Label" String="Street-No."/>
+                                    <PropertyValue Property="Value" Path="customer/street_number"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="OrderMonitorService.EntityContainer/Orders">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="OrderMonitorService.Orders/createdAt">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="Core.Immutable" Bool="true"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Common.Label" String="{i18n>CreatedAt}"/>
+                </Annotations>
+                <Annotations Target="OrderMonitorService.Orders/createdBy">
+                    <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                    <Annotation Term="Core.Immutable" Bool="true"/>
+                    <Annotation Term="Core.Computed" Bool="true"/>
+                    <Annotation Term="Core.Description" String="{i18n>UserID.Description}"/>
+                        <Annotation Term="Common.Label" String="{i18n>CreatedBy}"/>
+                        </Annotations>
+                        <Annotations Target="OrderMonitorService.Orders/modifiedAt">
+                            <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                            <Annotation Term="Core.Computed" Bool="true"/>
+                            <Annotation Term="Common.Label" String="{i18n>ChangedAt}"/>
+                            </Annotations>
+                            <Annotations Target="OrderMonitorService.Orders/modifiedBy">
+                                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                                <Annotation Term="Core.Computed" Bool="true"/>
+                                <Annotation Term="Core.Description" String="{i18n>UserID.Description}"/>
+                                    <Annotation Term="Common.Label" String="{i18n>ChangedBy}"/>
+                                    </Annotations>
+                                    <Annotations Target="OrderMonitorService.EntityContainer/Customer">
+                                        <Annotation Term="Capabilities.DeleteRestrictions">
+                                            <Record Type="Capabilities.DeleteRestrictionsType">
+                                                <PropertyValue Property="Deletable" Bool="false"/>
+                                            </Record>
+                                        </Annotation>
+                                        <Annotation Term="Capabilities.InsertRestrictions">
+                                            <Record Type="Capabilities.InsertRestrictionsType">
+                                                <PropertyValue Property="Insertable" Bool="false"/>
+                                            </Record>
+                                        </Annotation>
+                                        <Annotation Term="Capabilities.UpdateRestrictions">
+                                            <Record Type="Capabilities.UpdateRestrictionsType">
+                                                <PropertyValue Property="Updatable" Bool="false"/>
+                                            </Record>
+                                        </Annotation>
+                                    </Annotations>
+                                    <Annotations Target="OrderMonitorService.Customer/createdAt">
+                                        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                                        <Annotation Term="Core.Immutable" Bool="true"/>
+                                        <Annotation Term="Core.Computed" Bool="true"/>
+                                        <Annotation Term="Common.Label" String="{i18n>CreatedAt}"/>
+                                        </Annotations>
+                                        <Annotations Target="OrderMonitorService.Customer/createdBy">
+                                            <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                                            <Annotation Term="Core.Immutable" Bool="true"/>
+                                            <Annotation Term="Core.Computed" Bool="true"/>
+                                            <Annotation Term="Core.Description" String="{i18n>UserID.Description}"/>
+                                                <Annotation Term="Common.Label" String="{i18n>CreatedBy}"/>
+                                                </Annotations>
+                                                <Annotations Target="OrderMonitorService.Customer/modifiedAt">
+                                                    <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                                                    <Annotation Term="Core.Computed" Bool="true"/>
+                                                    <Annotation Term="Common.Label" String="{i18n>ChangedAt}"/>
+                                                    </Annotations>
+                                                    <Annotations Target="OrderMonitorService.Customer/modifiedBy">
+                                                        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                                                        <Annotation Term="Core.Computed" Bool="true"/>
+                                                        <Annotation Term="Core.Description" String="{i18n>UserID.Description}"/>
+                                                            <Annotation Term="Common.Label" String="{i18n>ChangedBy}"/>
+                                                            </Annotations>
+                                                            <Annotations Target="OrderMonitorService.OrderItems">
+                                                                <Annotation Term="UI.LineItem">
+                                                                    <Collection>
+                                                                        <Record Type="UI.DataField">
+                                                                            <PropertyValue Property="Label" String="Order-Pos."/>
+                                                                            <PropertyValue Property="Value" Path="pos"/>
+                                                                        </Record>
+                                                                        <Record Type="UI.DataField">
+                                                                            <PropertyValue Property="Label" String="Count Items ordered"/>
+                                                                            <PropertyValue Property="Value" Path="count"/>
+                                                                        </Record>
+                                                                        <Record Type="UI.DataField">
+                                                                            <PropertyValue Property="Label" String="Item-Name"/>
+                                                                            <PropertyValue Property="Value" Path="fooditem/name"/>
+                                                                        </Record>
+                                                                    </Collection>
+                                                                </Annotation>
+                                                            </Annotations>
+                                                            <Annotations Target="OrderMonitorService.EntityContainer/OrderItems">
+                                                                <Annotation Term="Capabilities.DeleteRestrictions">
+                                                                    <Record Type="Capabilities.DeleteRestrictionsType">
+                                                                        <PropertyValue Property="Deletable" Bool="false"/>
+                                                                    </Record>
+                                                                </Annotation>
+                                                                <Annotation Term="Capabilities.InsertRestrictions">
+                                                                    <Record Type="Capabilities.InsertRestrictionsType">
+                                                                        <PropertyValue Property="Insertable" Bool="false"/>
+                                                                    </Record>
+                                                                </Annotation>
+                                                                <Annotation Term="Capabilities.UpdateRestrictions">
+                                                                    <Record Type="Capabilities.UpdateRestrictionsType">
+                                                                        <PropertyValue Property="Updatable" Bool="false"/>
+                                                                    </Record>
+                                                                </Annotation>
+                                                            </Annotations>
+                                                            <Annotations Target="OrderMonitorService.EntityContainer/FoodItems">
+                                                                <Annotation Term="Capabilities.DeleteRestrictions">
+                                                                    <Record Type="Capabilities.DeleteRestrictionsType">
+                                                                        <PropertyValue Property="Deletable" Bool="false"/>
+                                                                    </Record>
+                                                                </Annotation>
+                                                                <Annotation Term="Capabilities.InsertRestrictions">
+                                                                    <Record Type="Capabilities.InsertRestrictionsType">
+                                                                        <PropertyValue Property="Insertable" Bool="false"/>
+                                                                    </Record>
+                                                                </Annotation>
+                                                                <Annotation Term="Capabilities.UpdateRestrictions">
+                                                                    <Record Type="Capabilities.UpdateRestrictionsType">
+                                                                        <PropertyValue Property="Updatable" Bool="false"/>
+                                                                    </Record>
+                                                                </Annotation>
+                                                            </Annotations>
+                                                            <Annotations Target="OrderMonitorService.FoodItems/createdAt">
+                                                                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                                                                <Annotation Term="Core.Immutable" Bool="true"/>
+                                                                <Annotation Term="Core.Computed" Bool="true"/>
+                                                                <Annotation Term="Common.Label" String="{i18n>CreatedAt}"/>
+                                                                </Annotations>
+                                                                <Annotations Target="OrderMonitorService.FoodItems/createdBy">
+                                                                    <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                                                                    <Annotation Term="Core.Immutable" Bool="true"/>
+                                                                    <Annotation Term="Core.Computed" Bool="true"/>
+                                                                    <Annotation Term="Core.Description" String="{i18n>UserID.Description}"/>
+                                                                        <Annotation Term="Common.Label" String="{i18n>CreatedBy}"/>
+                                                                        </Annotations>
+                                                                        <Annotations Target="OrderMonitorService.FoodItems/modifiedAt">
+                                                                            <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                                                                            <Annotation Term="Core.Computed" Bool="true"/>
+                                                                            <Annotation Term="Common.Label" String="{i18n>ChangedAt}"/>
+                                                                            </Annotations>
+                                                                            <Annotations Target="OrderMonitorService.FoodItems/modifiedBy">
+                                                                                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                                                                                <Annotation Term="Core.Computed" Bool="true"/>
+                                                                                <Annotation Term="Core.Description" String="{i18n>UserID.Description}"/>
+                                                                                    <Annotation Term="Common.Label" String="{i18n>ChangedBy}"/>
+                                                                                    </Annotations>
+                                                                                </Schema>
+                                                                            </edmx:DataServices>
+                                                                        </edmx:Edmx>
